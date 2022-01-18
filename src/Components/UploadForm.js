@@ -5,7 +5,9 @@ const StyledContainer = styled.section `
     background-color: #11B6DA;
     padding: 20px;
     margin: 75px 200px;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `
 
 const StyledForm = styled.form `
@@ -14,7 +16,8 @@ const StyledForm = styled.form `
     justfiy-content:center;
     align-items:left;
     margin: 50px;
-
+    max-width: 800px;
+    width: 600px
 `
 
 const StyledFormControl = styled.div `
@@ -79,7 +82,7 @@ const UploadForm = () => {
                 <StyledFormControl>
                     <StyledLabel >Car Folder Zip</StyledLabel>
                     <input type="file" ref={hiddenFileInput2}  hidden/>
-                    <StyledFileSubmit onClick={handleClick1}>Attach Car Folder Zip</StyledFileSubmit>
+                    <StyledFileSubmit onClick={handleClick2}>Attach Car Folder Zip</StyledFileSubmit>
                 </StyledFormControl>
                 <StyledButton>Upload</StyledButton>
             </StyledForm>
