@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import { initializeApp } from 'firebase/app'
+import { getStorage, ref } from 'firebase/storage'
 
 const firebaseConfig = {
   apiKey: "AIzaSyBZb0a3sjc3iJy7WYvv-NsAMLe-TmYPfKQ",
@@ -15,8 +16,11 @@ const firebaseConfig = {
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
+const storage = getStorage(firebaseApp)
 
-export { firebaseApp } ;
+const storageRef = ref(storage)
+
+export { firebaseApp, storage, storageRef };
 
 ReactDOM.render(
     <App />,

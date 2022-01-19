@@ -5,13 +5,13 @@ import {DataGrid} from '@mui/x-data-grid'
 const StyledContainer = styled.section `
     background-color: #11B6DA;
     padding: 20px;
-    margin: 75px 200px;
+    margin: 50px 0;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 405px;
-    width: 80%;
-    margin: 60px;
+    min-width: 700px;
+    // max-width: 600px;
 `
 const columns = [
     { field: 'id', headerName: 'ID', width: 70 },

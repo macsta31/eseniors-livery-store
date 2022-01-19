@@ -9,5 +9,9 @@
 .App{
   
   background-color: #43423D;
+  min-height: 100vh;
+}
+button:hover{
+  cursor:pointer;
 }
 
