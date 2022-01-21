@@ -2,8 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import Files from './routes/Files';
 import { initializeApp } from 'firebase/app'
 import { getStorage, ref } from 'firebase/storage'
+import {
+  BrowserRouter,
+  Routes,
+  Route
+} from 'react-router-dom';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBZb0a3sjc3iJy7WYvv-NsAMLe-TmYPfKQ",
@@ -23,7 +29,12 @@ const storageRef = ref(storage)
 export { firebaseApp, storage, storageRef };
 
 ReactDOM.render(
-    <App />,
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<App/>} />
+      <Route path="Files/:Account" element={<Files />} />
+    </Routes>
+  </BrowserRouter>,
   document.getElementById('root')
 );
 

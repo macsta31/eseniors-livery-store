@@ -1,9 +1,9 @@
 import React from 'react'
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { storage } from '../index.js'
-import { ref, uploadBytes } from 'firebase/storage';
-import { getAuth } from 'firebase/auth'
+import { ref, uploadBytes, listAll } from 'firebase/storage';
+import { getAuth } from 'firebase/auth';
 
 
 
@@ -12,6 +12,7 @@ import { getAuth } from 'firebase/auth'
 
 const UploadForm = () => {
     const user = getAuth()
+   
 
     const hiddenFileInput1 = React.useRef(null)
     const hiddenFileInput2 = React.useRef(null)
@@ -49,21 +50,26 @@ const UploadForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        const LiveryFolderZip = e.target.form[1].files[0]
-        const CarFile = e.target.form[3].files[0]
-        const designName = e.target.form[4].value
-        console.log(CarFile)
+        if(!user.currentUser){
+            alert('Must be Logged in to submit files')
+        }
+        else{
+            const LiveryFolderZip = e.target.form[1].files[0]
+            const CarFile = e.target.form[3].files[0]
+            const designName = e.target.form[4].value
+            console.log(CarFile)
 
 
-        const CarStorageRef = ref(storage, `Users/${user.currentUser.email}/${designName}/CarFile`)
-        const LiveryStorageRef = ref(storage, `Users/${user.currentUser.email}/${designName}/LiveryFile`)
+            const CarStorageRef = ref(storage, `Users/${user.currentUser.email}/${designName}/${designName}-CarFile.json`)
+            const LiveryStorageRef = ref(storage, `Users/${user.currentUser.email}/${designName}/${designName}-LiveryFile.zip`)
 
 
-        uploadBytes(CarStorageRef, CarFile)
-        uploadBytes(LiveryStorageRef, LiveryFolderZip)
-        setAttachedFile1('')
-        setAttachedFile2('')
-        e.target.form[4].value = ''
+            uploadBytes(CarStorageRef, CarFile)
+            uploadBytes(LiveryStorageRef, LiveryFolderZip)
+            setAttachedFile1('')
+            setAttachedFile2('')
+            e.target.form[4].value = ''
+        }
 
 
     }
@@ -124,6 +130,7 @@ const StyledContainer = styled.section `
     align-items: center;
     max-width: 600px;
     justify-content: center;
+    border-radius: 8px;
 `
 
 const StyledForm = styled.form `

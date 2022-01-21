@@ -1,18 +1,36 @@
 import React from 'react'
 import styled from 'styled-components';
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useState } from 'react';
 
 
 
-const Header = ({onClick, userStatus }) => {
-    const user = getAuth()
+const Header = ({onClick}) => {
+    const auth = getAuth()
+
+
+    const [uid, setuid] = useState(0)
+    
+
+
+    onAuthStateChanged(auth, (user) => {
+        if(user){
+            setuid(user.uid)
+        }
+        else{
+            setuid(0)
+        }
+    })
+    
+    
+
 
     return (
         <StyledHeader>
             <Styledh1>E-Seniors racing league livery store</Styledh1>
             <StyledSpan>
-            {user.currentUser && <p>{user.currentUser.email}</p>}
-            <StyledButton onClick={onClick}>Login / Logout</StyledButton>
+                {uid !== 0 && <p>{auth.currentUser.displayName}</p>}
+            <StyledButton onClick={onClick}>{uid === 0 ? 'Login' : 'Logout'}</StyledButton>
             </StyledSpan>
         </StyledHeader>
     )
