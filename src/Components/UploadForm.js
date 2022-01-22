@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import { storage } from '../index.js'
-import { ref, uploadBytes, listAll } from 'firebase/storage';
+import { ref, uploadBytes, listAll, updateMetadata } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 
 
@@ -18,21 +18,17 @@ const UploadForm = () => {
     const hiddenFileInput2 = React.useRef(null)
 
     const handleClick1 = (e) => {
-        e.preventDefault()
-        if(user.currentUser){
-            hiddenFileInput1.current.click()
+        try{
+            e.preventDefault()
+            if(user.currentUser){
+                hiddenFileInput1.current.click()
+            }
+            else{
+                alert('Must be logged in to upload and download files')
+            }
         }
-        else{
-            alert('Must be logged in to upload and download files')
-        }
-    }
-    const handleClick2 = (e) => {
-        e.preventDefault(e)
-        if(user.currentUser){
-            hiddenFileInput2.current.click()
-        }
-        else{
-            alert('Must be logged in to upload and download files')
+        catch(err){
+            alert(err)
         }
     }
 
@@ -53,15 +49,27 @@ const UploadForm = () => {
                 throw new Error('provide design name')
             }
             const designName = e.target.form[2].value
-            console.log(designName)
 
 
-            const DesignStorageRef = ref(storage, `Users/${user.currentUser.email}/${designName}.zip`)
+            const DesignStorageRef = ref(storage, `Users/${user.currentUser.displayName}/${designName}.zip`)
 
 
-            uploadBytes(DesignStorageRef, DesignFolder)
+            await uploadBytes(DesignStorageRef, DesignStorageRef)
+
+            const fileLocation = ref(storage, DesignStorageRef)
+
+            const newMetaData = {
+                    customMetadata : {
+                    owner: `${user.currentUser.email}`
+                }
+            }
+
+            await updateMetadata(fileLocation, newMetaData)
+
             setAttachedFile1('')
+
             e.target.form[2].value = ''
+
         }
 
 

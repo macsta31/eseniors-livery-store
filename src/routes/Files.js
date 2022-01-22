@@ -1,10 +1,13 @@
 import React from 'react';
 import styled from 'styled-components'
 import { useState, useEffect } from 'react';
-import { ref, list, getDownloadURL } from "firebase/storage";
+import { ref, list, getDownloadURL, deleteObject, getMetadata } from "firebase/storage";
 import { storage } from '../index';
+import { getAuth } from 'firebase/auth'
+
 
 const Files = () => {
+    const auth = getAuth()
     const getAccount = () => {
         const url = window.location.href
         return url.split("/")[4]
@@ -12,8 +15,9 @@ const Files = () => {
 
     const [files, setFiles] = useState([])
     const [urls, seturls] = useState([])
-    const account = getAccount()
-    const location = `Users/${account}`
+    const account = getAccount().replace('%20', ' ')
+    const location = `Users/${account.replace('%20', ' ')}`
+
 
     useEffect(() => {
         async function getFiles(account) {
@@ -49,9 +53,26 @@ const Files = () => {
         e.preventDefault()
         const urlEnding = e.target.form.children[0].innerText
         const url = `Users/${account}/${urlEnding}`
+        console.log(url)
         const downloadURL = await getDownloadURL(ref(storage, url))
+        console.log(downloadURL)
         seturls([downloadURL])
 
+    }
+
+    const deleteFile = async (e) => {
+        e.preventDefault();
+        const location = e.target.id
+        const fileRef = ref(storage, location)
+
+        const metaData = await getMetadata(fileRef)
+        if(metaData.customMetadata.owner !== auth.currentUser.email){
+            throw new Error('You do not own this file')
+        }
+        else{
+            await deleteObject(fileRef)
+        }
+        window.location.reload(true)
     }
 
 
@@ -60,21 +81,22 @@ const Files = () => {
   return (
     <StyledBox>
           <StyledTable>
-          <StyledTitle>{account}'s Design Library</StyledTitle>
+          <StyledTitle>{account.replace('%20', ' ')} Design Library</StyledTitle>
           <StyledUl>
             {goodFiles.map((file) => (      
             <StyledTableCell key={file} >
                 <StyledFileName>
                     {file.split("/")[2]}
                 </StyledFileName>
-                <div>
+                <div style={{display: 'flex', gap: '20px'}}>
                     <StyledButton onClick={downloadFile} >Get Links</StyledButton>
+                    <StyledButton onClick={deleteFile} id={`${file}`} keyprop={file} style={{backgroundColor: 'red'}} >Delete</StyledButton>
                 </div>
             </StyledTableCell>
             ))}
             </StyledUl>
             {urls.map((url) => (
-                <StyledA key={urls} href={`${urls}`} target="_blank" >{urls[0].split("?")[0].split("0")[3]}</StyledA>
+                <StyledA key={urls} href={`${urls}`} target="_blank" >{url.split('2F')[2].split('?')[0]} Download</StyledA>
             ))}
           </StyledTable>
     </StyledBox>
@@ -84,6 +106,7 @@ const StyledButton = styled.button `
     background-color:#43423D;
     border:none;
     padding: 10px;
+    border-radius: 8px;
 
 `
 const StyledFileName = styled.div`

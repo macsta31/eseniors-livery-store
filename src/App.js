@@ -6,7 +6,7 @@ import LoginModal from './Components/LoginModal';
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import { storage } from '.';
-import { getAuth, signOut, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, browserSessionPersistence, setPersistence } from 'firebase/auth'
+import { getAuth, signOut, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, browserSessionPersistence, setPersistence, updateProfile } from 'firebase/auth'
 import { ref, list } from 'firebase/storage'
 
 
@@ -56,7 +56,6 @@ function App() {
 
   const listdata = async () => {
     const listRef = ref(storage, 'Users/')
-    var folders = []
 
 
     const UsersArray = await list(listRef)
@@ -92,6 +91,8 @@ function App() {
       const provider = new GoogleAuthProvider()
       signInWithPopup(auth, provider)
       
+    }).catch((err) => {
+      console.log(err)
     })
     setLoginPage(!loginPage)
     
@@ -102,17 +103,17 @@ function App() {
     try {
       const email = e.target.form[2].value
       const password = e.target.form[3].value
-      const displayName = `${e.target.form[0].value +' '+ e.target.form[1].value}`
+      const DisplayName = `${e.target.form[0].value +' '+ e.target.form[1].value}`
       if(e.target.form[0].value  === '' || e.target.form[1].value  === ''){
         throw new Error('PROVIDE FIRST AND LAST NAME') 
       }  
       await createUserWithEmailAndPassword(auth, email, password)
       .then((res) => {
-        
-        res.user.displayName = displayName
+        console.log(res)
         
       })
-      console.log(auth.currentUser)
+      await updateProfile(auth.currentUser, {displayName: DisplayName})
+      window.location.reload(true)
       setLoginPage(!loginPage)
     }
     catch(err){

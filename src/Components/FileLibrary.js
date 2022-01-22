@@ -6,6 +6,7 @@ import { ref, listAll } from 'firebase/storage'
 import { storage } from '..'
 import TableCell from './TableCell'
 import { Link } from 'react-router-dom'
+import JSZip from 'jszip'
 
 
 
@@ -15,7 +16,9 @@ import { Link } from 'react-router-dom'
 
 const FileLibrary = ({storagefiles}) => {
 
-  
+
+  var jszip = new JSZip()
+  console.log(jszip)
 
 
   return (
