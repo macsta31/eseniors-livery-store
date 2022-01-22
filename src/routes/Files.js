@@ -19,7 +19,7 @@ const Files = () => {
         async function getFiles(account) {
             const listRef = ref(storage, location)
             const folders = await list(listRef)
-            setFiles(folders.prefixes)
+            setFiles(folders.items)
 
         }
         getFiles()
@@ -28,31 +28,29 @@ const Files = () => {
         return file.fullPath
     })
 
-    const loop = async (items) => {
-        const URLS = []
-        for(const item of items) {
-            await getDownloadURL(ref(storage, item))
-            .then((url) => {
-                URLS.push(url)
-            })   
-        }
-        return URLS
-    }
+    // const loop = async (items) => {
+    //     const URLS = []
+    //     for(const item of items) {
+    //         await getDownloadURL(ref(storage, item))
+    //         .then((url) => {
+    //             URLS.push(url)
+    //         })   
+    //     }
+    //     return URLS
+    // }
 
-    const getUrls = async (data) => {
-        const items = data.items
-        const goodURLS = await loop(items)
-        return goodURLS
-    }
+    // const getUrls = async (data) => {
+    //     const items = data.items
+    //     const goodURLS = await loop(items)
+    //     return goodURLS
+    // }
 
     const downloadFile = async (e) => {
         e.preventDefault()
         const urlEnding = e.target.form.children[0].innerText
         const url = `Users/${account}/${urlEnding}`
-        const pathReference = ref(storage, url)
-        const data = await list(pathReference)
-        const Urls =  await getUrls(data)
-        seturls(Urls)
+        const downloadURL = await getDownloadURL(ref(storage, url))
+        seturls([downloadURL])
 
     }
 
@@ -76,8 +74,8 @@ const Files = () => {
             ))}
             </StyledUl>
             {urls.map((url) => (
-                        <StyledA key={url} href={`${url}`} type='application/json' target="_blank">{url.split("%")[4].split("F")[1]} Download</StyledA>
-                    ))}
+                <StyledA key={urls} href={`${urls}`} target="_blank" >{urls[0].split("?")[0].split("0")[3]}</StyledA>
+            ))}
           </StyledTable>
     </StyledBox>
   )

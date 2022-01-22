@@ -37,38 +37,31 @@ const UploadForm = () => {
     }
 
     const [attachedFile1, setAttachedFile1] = useState('')
-    const [attachedFile2, setAttachedFile2] = useState('')
 
     const handleAttach1 = (e) => {
         e.preventDefault()
         setAttachedFile1(e.target.value)
     }
-    const handleAttach2 = (e) => {
-        e.preventDefault()
-        setAttachedFile2(e.target.value)
-    }
-
     const handleSubmit = async (e) => {
         e.preventDefault()
         if(!user.currentUser){
             alert('Must be Logged in to submit files')
         }
         else{
-            const LiveryFolderZip = e.target.form[1].files[0]
-            const CarFile = e.target.form[3].files[0]
-            const designName = e.target.form[4].value
-            console.log(CarFile)
+            const DesignFolder = e.target.form[1].files[0]
+            if(e.target.form[2].value === ''){
+                throw new Error('provide design name')
+            }
+            const designName = e.target.form[2].value
+            console.log(designName)
 
 
-            const CarStorageRef = ref(storage, `Users/${user.currentUser.email}/${designName}/${designName}-CarFile.json`)
-            const LiveryStorageRef = ref(storage, `Users/${user.currentUser.email}/${designName}/${designName}-LiveryFile.zip`)
+            const DesignStorageRef = ref(storage, `Users/${user.currentUser.email}/${designName}.zip`)
 
 
-            uploadBytes(CarStorageRef, CarFile)
-            uploadBytes(LiveryStorageRef, LiveryFolderZip)
+            uploadBytes(DesignStorageRef, DesignFolder)
             setAttachedFile1('')
-            setAttachedFile2('')
-            e.target.form[4].value = ''
+            e.target.form[2].value = ''
         }
 
 
@@ -77,23 +70,14 @@ const UploadForm = () => {
     return (
         <StyledContainer>
             <StyledForm>
-                <StyledTitle>Upload Files For Livery Here</StyledTitle>
+                <StyledTitle>Upload Zip For Design Here</StyledTitle>
                 <StyledFormControl>
-                    <StyledLabel >Livery Folder Zip</StyledLabel>
+                    <StyledLabel >Design Folder Zip</StyledLabel>
                     <StyledFormAttachment>
                         <StyledFileSubmit onClick={handleClick1} >Attach Livery Folder Zip</StyledFileSubmit>
                         <p style={{alignSelf:'center'}} >{attachedFile1}</p>
                     </StyledFormAttachment>
                     <input type="file" ref={hiddenFileInput1} onChange={handleAttach1} hidden />
-                </StyledFormControl>
-                <StyledFormControl>
-                    <StyledLabel >Car File</StyledLabel>
-                    
-                    <StyledFormAttachment>
-                        <StyledFileSubmit onClick={handleClick2} >Attach Car Folder Zip</StyledFileSubmit>
-                        <p style={{alignSelf:'center'}}>{attachedFile2}</p>
-                    </StyledFormAttachment>
-                    <input type="file" ref={hiddenFileInput2}  onChange={handleAttach2} hidden/>
                 </StyledFormControl>
                 <StyledFormControl>
                     <StyledLabel >Folder Name</StyledLabel>
